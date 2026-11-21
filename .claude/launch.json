@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "umbraco",
+      "runtimeExecutable": "pwsh",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "Remove-Item Env:ConnectionStrings__umbracoDbDSN -ErrorAction SilentlyContinue; dotnet run --project src/NotificationsRevisit.Web --launch-profile Umbraco.Web.UI"
+      ],
+      "port": 44371,
+      "url": "https://localhost:44371"
+    }
+  ]
+}
