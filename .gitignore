@@ -483,3 +483,6 @@ src/*/wwwroot/media/
 
 # Local AI agent settings (personal overrides)
 .claude/settings.local.json
+
+# Playwright MCP console and snapshot output
+.playwright-mcp/

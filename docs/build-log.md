@@ -3,9 +3,29 @@
 A running record of what we did, in order, and why. Written to feed the 24 Days in Umbraco article,
 so it records the reasoning and the dead ends, not just the commands.
 
-Date: 21 November 2026.
+Times are UK time (GMT) on 21 November 2026, taken from the session transcript and Git commit
+times. They are wall-clock times: they include the human's thinking and review time between
+messages, not just the agent's working time.
 
-## Phase 1: setting up the PoC
+### Timeline
+
+| Time | What happened | Elapsed |
+|---|---|---|
+| 11:01 | Brief: vanilla Umbraco 17 with Automate, AI-first basics, document decisions | 0 min |
+| 11:05 | Project created from the `umbraco` template | 4 min |
+| 11:06 | First boot fails (machine-wide connection string override) | 5 min |
+| 11:08 | Site boots: unattended install and Automate migrations complete | 7 min |
+| 11:11 | Phase 1 committed: running site, `AGENTS.md`, build log | **10 min** |
+| 11:16 | Phase 2 starts: OpenSpec explore mode, approach logged first | 15 min |
+| 11:21 | 2018 article and repo researched; scope decided (parity, no Automate) | 20 min |
+| 11:23 to 11:41 | Four design decisions, one question at a time | 22 to 40 min |
+| 11:44 | Capture approved: `openspec init`, proposal, three specs, design, tasks | 43 min |
+| 11:51 | Plan committed, strict validation passing | **50 min** |
+| 12:04 to 12:07 | Plan revised (site scripts in TypeScript and Vite) and committed | 66 min |
+| 12:10 to 12:15 | Agent permissions allowlist; Playwright push spike proves real pushes arrive | 69 to 74 min |
+| 12:32 | Verification plan revised to match the spike | 91 min |
+
+## Phase 1: setting up the PoC (11:01 to 11:11)
 
 ### Summary
 
@@ -43,7 +63,7 @@ So Automate 17.6.0 needs Umbraco 17.6 or later and refuses Umbraco 18.
 release and state "Umbraco CMS 18.0 or later". The GitHub README says 17.x. NuGet is the source of
 truth: the package metadata settles it in seconds.
 
-### 2. Creating the project
+### 2. Creating the project (11:05)
 
 The machine already had `Umbraco.Templates` 17.6.0 installed. Rather than upgrade a global
 template (which affects every other project on the machine), we created from 17.6.0 and bumped the
@@ -142,7 +162,7 @@ Same plan for Automate: its `Umbraco:Automate:Secrets:*` values should go in use
 This is also an AI-first point: secrets not in the repo means secrets not in an agent's context
 window.
 
-### 6. First run and verification
+### 6. First run and verification (11:06 to 11:10)
 
 First run failed. The trace log showed:
 
@@ -232,9 +252,8 @@ permissions should be a human decision. Suggested contents, if you want them:
 
 ---
 
-## Phase 2: gathering requirements from the 2018 article
+## Phase 2: gathering requirements from the 2018 article (11:16 to 12:07)
 
-Date: 21 November 2026.
 
 ### The goal
 
@@ -242,7 +261,7 @@ Recreate, and improve, the custom backoffice extension from the 2018 24 Days art
 [Push notifications and Umbraco](https://archive.24days.in/umbraco-cms/2018/push-notifications-and-umbraco/)
 on modern Umbraco, then compare what changed.
 
-### Approach (decided before starting the research)
+### Approach (decided before starting the research, 11:17)
 
 1. **Write the approach down first.** This section exists before any research, so the article
    can show the plan as it was, not as it looks in hindsight.
@@ -349,7 +368,7 @@ while almost everything on the Umbraco side has been replaced.
   but only for sites added to the home screen, which needs a web app manifest. [TK: confirm
   current Safari and iOS behaviour, including Declarative Web Push.]
 
-### Decision: scope of the first version
+### Decision: scope of the first version (11:21)
 
 **Decided (21 November 2026):** rebuild the 2018 extension as it was, inside this app, without
 Umbraco Automate. Automate comes later.
@@ -365,7 +384,7 @@ the comparison honest: same feature, two eras. Adding Automate now would mix two
 **Article angle for this part:** show the plan (the OpenSpec change), a few architectural
 decisions, and how the agent implemented and validated the feature.
 
-### Decision: the parity boundary
+### Decision: the parity boundary (11:23)
 
 **Decided (21 November 2026), as proposed:**
 
@@ -385,7 +404,7 @@ decisions, and how the agent implemented and validated the feature.
 **Why:** parity means the behaviour editors and visitors saw, not every toggle on screen.
 Rebuilding switches that did nothing would make the comparison less honest, not more.
 
-### Decision: a separate Razor class library
+### Decision: a separate Razor class library (11:34)
 
 **Decided (21 November 2026):** the extension lives in its own RCL, created with
 `dotnet new umbraco-extension --include-example --site-domain https://localhost:44371`.
@@ -404,7 +423,7 @@ real feature replaces it. Umbraco packages are aligned to 17.8.2 through central
 **Rejected:** putting everything in the web project. Fewer projects, but we would hand-roll the
 front-end build and client generation, and extract it all later to package it.
 
-### Decision: NPoco with a migration plan
+### Decision: NPoco with a migration plan (11:38)
 
 **Decided (21 November 2026):** the subscriptions and send history tables use NPoco POCOs and
 an Umbraco package migration plan, run at startup.
@@ -418,7 +437,7 @@ an Umbraco package migration plan, run at startup.
 
 **Rejected:** EF Core. Familiar and supported, but heavier than two small tables need.
 
-### Decision: the site owns the content model, the RCL is configured
+### Decision: the site owns the content model, the RCL is configured (11:41)
 
 **Decided (21 November 2026):**
 
@@ -436,7 +455,7 @@ The boundary is clean: the feature lives in the RCL; the content model belongs t
 **Rejected:** the RCL creating its own doc types. It works out of the box, but forces its
 content model on every site that installs it.
 
-### Capturing the plan as an OpenSpec change
+### Capturing the plan as an OpenSpec change (11:44 to 11:51)
 
 **Done (21 November 2026):**
 
@@ -474,7 +493,7 @@ content model on every site that installs it.
 - **Two open questions deliberately left for implementation** (the Translators group GUID and the
   exact migration base class in 17.8.2): neither changes what gets built.
 
-### Revision: site scripts in TypeScript, built by Vite
+### Revision: site scripts in TypeScript, built by Vite (12:04 to 12:07)
 
 **Decided (21 November 2026):** the design first had the site's `push.js` and `sw.js` as plain
 JavaScript in `wwwroot`. Changed to TypeScript under `src/NotificationsRevisit.Web/Client/`,
@@ -496,3 +515,67 @@ checking for code that is otherwise hard to debug, and a build an agent can run 
 the spec first (design D1, D7, D9 and a new risk; the proposal's impact; a new task 5.3) kept the
 plan and the code from drifting apart before any code existed. The behaviour specs did not change,
 which is the point: they describe what visitors experience, not the language it is written in.
+
+---
+
+## Phase 3: preparing to build (12:10)
+
+### Agent permissions allowlist (12:11)
+
+Added `.claude/settings.json` (committed, so it applies to anyone using Claude Code in the repo):
+
+- **Allowed without a prompt:** `dotnet build`, `restore`, `run`, `test`, `list package`, and
+  `npm ci`, `install`, `run`, for both the Bash and PowerShell tools.
+- **Denied:** reading `secrets.json` (user secrets) and `*.sqlite.db` files.
+
+**Why now:** implementation runs these commands dozens of times. Without an allowlist every one is
+a permission prompt, which breaks the flow the article wants to show. The deny rules keep secrets
+and the database out of the agent's context even if it goes looking.
+
+**Process note:** in phase 1 Claude Code's safety check blocked the agent from writing this file
+on its own initiative, because it changes the agent's own permissions. This time the human asked
+for it explicitly, and it went through. That is the right split: the agent can suggest
+permissions, but a person decides.
+
+### Spike: can Playwright receive a real web push? (12:12 to 12:15)
+
+Task 8.1 needs a browser the agent can drive that actually receives push messages. The in-app
+preview browser was uncertain, so we tested Playwright with a throwaway page (in the agent's
+scratchpad, not the repo): Node's `web-push` library, a service worker and a subscribe button.
+
+**Result: yes.**
+
+| Step | Outcome |
+|---|---|
+| Grant notification permission via Playwright (`context.grantPermissions`) | Granted, no prompt |
+| `pushManager.subscribe` with a VAPID key | Real subscription on `fcm.googleapis.com` (Playwright's Chromium 156) |
+| Server sends a push | Push service returned **201** |
+| Did the service worker show it? | `registration.getNotifications()` returned "Spike / 21 Nov Pool closed" |
+| Unsubscribe in the browser, then send again | Push service returned **410**, the signal our cleanup relies on |
+
+**What Playwright cannot do:** click the OS notification. Native toasts sit outside the page, so
+the `notificationclick` handler (focus or open the announcement page) needs a manual check, or a
+person clicking the toast during the end-to-end run.
+
+**Gotchas from the spike:**
+- `getNotifications()` on the service worker registration is the reliable way to assert a
+  notification was shown; the OS toast itself is invisible to the test.
+- Playwright MCP writes console logs to `.playwright-mcp/` in the working directory. Now gitignored.
+
+### Revision: verification plan follows the spike (12:32)
+
+Updated the OpenSpec change so the plan matches what the spike proved:
+
+- **Design D10:** end-to-end testing runs in Playwright (not "in-app or Playwright"), grants
+  notification permission up front, asserts with `registration.getNotifications()`, and tests
+  the 410 cleanup against the real push service. A person checks the click.
+- **Tasks:** 8.1 is the automated send and display check, new 8.2 is the human click check,
+  8.3 is the unsubscribe and 410 check, and the write-up moves to 8.4.
+
+**Rejected:** dispatching a synthetic `notificationclick` inside the service worker. It would
+pass, but it would only prove our test harness works, not that the browser behaves.
+
+**Process note:** the spike took about three minutes and replaced an assumption in the plan
+("the agent can verify the click") with evidence. Cheap spikes before implementation are one of
+the easiest wins in AI-assisted work: the agent can build a throwaway test faster than we can
+debate whether something will work.

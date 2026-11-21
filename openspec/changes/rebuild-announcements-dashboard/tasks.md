@@ -49,9 +49,10 @@
 
 ## 8. End-to-end verification
 
-- [ ] 8.1 With a subscribed browser, send an announcement from the dashboard; verify the page publishes as `yyyyMMdd-{shortName}`, the notification appears with the configured title and "dd MMM heading", clicking it opens or focuses the page, and the history row shows correct delivery counts
-- [ ] 8.2 Delete a subscription at the push service side (unsubscribe in the browser), send again; verify the gone subscription is removed and counted
-- [ ] 8.3 Record the end-to-end results, screenshots and the 2018 versus 2026 comparison notes in `docs/build-log.md`; verify `openspec validate rebuild-announcements-dashboard` passes
+- [ ] 8.1 In Playwright, grant notification permission, subscribe on the site and send an announcement from the dashboard; verify the page publishes as `yyyyMMdd-{shortName}`, `registration.getNotifications()` shows the configured title and "dd MMM heading", and the history row shows correct delivery counts
+- [ ] 8.2 Ask the human to click the notification (Playwright cannot click OS notifications); verify with them that it focuses an already open tab on that page, and opens a new window when none is open
+- [ ] 8.3 In Playwright, unsubscribe in the browser and send again; verify the push service's 410 removes the subscription and it is counted as removed
+- [ ] 8.4 Record the end-to-end results, screenshots and the 2018 versus 2026 comparison notes in `docs/build-log.md`; verify `openspec validate rebuild-announcements-dashboard` passes
 
 ## Workflow follow-up
 

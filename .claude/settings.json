@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(dotnet restore *)",
+      "Bash(dotnet run *)",
+      "Bash(dotnet test *)",
+      "Bash(dotnet list package *)",
+      "Bash(npm ci *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "PowerShell(dotnet build *)",
+      "PowerShell(dotnet restore *)",
+      "PowerShell(dotnet run *)",
+      "PowerShell(dotnet test *)",
+      "PowerShell(dotnet list package *)",
+      "PowerShell(npm ci *)",
+      "PowerShell(npm install *)",
+      "PowerShell(npm run *)"
+    ],
+    "deny": [
+      "Read(**/secrets.json)",
+      "Read(**/*.sqlite.db)"
+    ]
+  }
+}

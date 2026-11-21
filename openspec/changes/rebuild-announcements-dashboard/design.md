@@ -180,9 +180,20 @@ src/NotificationsRevisit.Web/
 
 - **Unit tests** (xUnit) for the logic most likely to break silently: delivery outcome counting
   and gone-subscription removal (with a fake sender), and page naming.
-- **Agent-driven end-to-end** in the in-app or Playwright browser: subscribe on the site, send an
-  announcement from the dashboard, confirm the history row, the published page and the delivery
-  counts. Results and screenshots recorded in `docs/build-log.md`.
+- **Agent-driven end-to-end in Playwright**, proven by a spike before implementation (see the
+  build log, phase 3): Playwright's Chromium receives real pushes through Google's push service.
+  - Grant notification permission with `context.grantPermissions`, so no prompt blocks the run.
+  - Subscribe on the site, send an announcement from the dashboard, confirm the history row, the
+    published page and the delivery counts.
+  - Assert the notification was shown with `registration.getNotifications()` from the page; the
+    OS toast itself is outside the browser and invisible to the test.
+  - Unsubscribe in the browser and send again: the push service returns 410, so the cleanup path
+    is tested against the real service, not a fake.
+- **Human check for the click:** Playwright cannot click an OS notification, so a person clicks
+  it during the end-to-end run to confirm `notificationclick` focuses an open tab or opens the
+  page. Results and screenshots recorded in `docs/build-log.md`.
+- Rejected: the in-app preview browser for push testing (untested), and dispatching a synthetic
+  click inside the service worker (it would test our test code, not the browser behaviour).
 - **Translator check:** create a translator-only user and confirm the dashboard is hidden and the
   API returns 403.
 
