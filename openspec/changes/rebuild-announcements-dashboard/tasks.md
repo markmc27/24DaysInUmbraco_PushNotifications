@@ -29,8 +29,9 @@
 
 - [ ] 5.1 Add the web project package migration creating Home, Announcements and Announcement doc types, templates and the Home and Announcements nodes; verify on a fresh database that the nodes exist and Home renders
 - [ ] 5.2 Add the `Announcements:ContentModel` options with startup validation and configure them in `appsettings.json`; verify the site refuses to start when an alias is missing
-- [ ] 5.3 Add the shared layout (antiforgery token, VAPID public key, opt-in control), the Home and Announcement views, `wwwroot/js/push.js` and `wwwroot/sw.js`; verify in the browser that no permission prompt appears on load, opting in stores one subscription, and the control then shows the enabled state
-- [ ] 5.4 Verify the opt-in is hidden in an insecure context and after subscribing on reload, and record the results in `docs/build-log.md`
+- [ ] 5.3 Scaffold `src/NotificationsRevisit.Web/Client/` (Vite, TypeScript, entry points `push.ts` and `sw.ts` with fixed output names `wwwroot/js/push.js` and `wwwroot/sw.js`, WebWorker types for the service worker), gitignore the outputs, and add the web `.csproj` target that runs `npm ci` when needed and `npm run build` before build; verify `dotnet build` from a clean clone produces both files and `git status` does not list them
+- [ ] 5.4 Add the shared layout (antiforgery token, VAPID public key, opt-in control), the Home and Announcement views, and implement `Client/src/push.ts` and `Client/src/sw.ts`; verify in the browser that no permission prompt appears on load, opting in stores one subscription, and the control then shows the enabled state
+- [ ] 5.5 Verify the opt-in is hidden in an insecure context and after subscribing on reload, and record the results in `docs/build-log.md`
 
 ## 6. Announcements API
 

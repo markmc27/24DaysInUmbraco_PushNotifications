@@ -473,3 +473,26 @@ content model on every site that installs it.
   group that caused them. Group 8 is integration only.
 - **Two open questions deliberately left for implementation** (the Translators group GUID and the
   exact migration base class in 17.8.2): neither changes what gets built.
+
+### Revision: site scripts in TypeScript, built by Vite
+
+**Decided (21 November 2026):** the design first had the site's `push.js` and `sw.js` as plain
+JavaScript in `wwwroot`. Changed to TypeScript under `src/NotificationsRevisit.Web/Client/`,
+built by Vite into `wwwroot`, revised with `/openspec-update-change`.
+
+- Two entry points with fixed output names: `wwwroot/js/push.js` and `wwwroot/sw.js`. No content
+  hashes, because a service worker needs a stable URL at the site root.
+- `sw.ts` is type-checked against the WebWorker library, so push and click events are typed.
+- Build output is gitignored. A web `.csproj` target runs `npm ci` (when needed) and
+  `npm run build` before the .NET build, so `dotnet build` works from a fresh clone.
+
+**Why:** one front-end approach across the repo (the RCL already uses Vite and TypeScript), type
+checking for code that is otherwise hard to debug, and a build an agent can run with one command.
+
+**Rejected:** plain JavaScript (no type checking, mixed approaches) and committing built files
+(stale output, noisy diffs). 2018 used jQuery modules bundled by Gulp.
+
+**Process note for the article:** this was a change of mind after the plan was written. Updating
+the spec first (design D1, D7, D9 and a new risk; the proposal's impact; a new task 5.3) kept the
+plan and the code from drifting apart before any code existed. The behaviour specs did not change,
+which is the point: they describe what visitors experience, not the language it is written in.

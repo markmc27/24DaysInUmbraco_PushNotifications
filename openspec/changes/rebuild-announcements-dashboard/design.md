@@ -32,7 +32,7 @@
 
 ```
 src/
-  NotificationsRevisit.Web/             site: content model migration, views, sw.js, push.js
+  NotificationsRevisit.Web/             site: content model migration, views, Client/ (Vite + TS: push.ts, sw.ts)
   NotificationsRevisit.Announcements/   RCL: API, services, persistence, Client/ (Lit + TS)
 tests/
   NotificationsRevisit.Announcements.Tests/
@@ -120,7 +120,7 @@ POST announcements
 
 - `POST /api/announcements/push-subscriptions`, an `[ApiController]` deriving from
   `ControllerBase` (no Umbraco base class needed for a public JSON endpoint).
-- `[ValidateAntiForgeryToken]`: the site layout renders the token; `push.js` sends it in the
+- `[ValidateAntiForgeryToken]`: the site layout renders the token; `push.ts` sends it in the
   `RequestVerificationToken` header.
 - ASP.NET Core rate limiting: a fixed window policy partitioned by client IP (default 5 per hour,
   configurable), applied with `[EnableRateLimiting]`. The middleware is added through an Umbraco
@@ -143,15 +143,38 @@ POST announcements
 - 2018: AngularJS controller and resource, `umb-overlay position="right"`, `umb-toggle`,
   `notificationsService`.
 
-### D9. Site front end: minimal and framework-free
+### D9. Site front end: TypeScript built by Vite, no UI framework
 
-- `wwwroot/sw.js` at the site root (scope `/`), close to the 2018 file: `push` shows the
-  notification with a fixed `tag`; `notificationclick` focuses or opens the URL. The icon path is
-  absolute, fixing the 2018 relative path.
-- `wwwroot/js/push.js`: plain modern JavaScript (no jQuery). Feature detection, secure context
-  check, opt-in button, `pushManager.subscribe` with the VAPID public key rendered into the page
-  by the layout, POST with `fetch`.
+```
+src/NotificationsRevisit.Web/
+  Client/                      source (committed)
+    package.json, tsconfig.json, vite.config.ts
+    src/push.ts                opt-in, subscribe, POST
+    src/sw.ts                  push and notificationclick handlers
+  wwwroot/
+    sw.js                      build output (gitignored), at the root for scope "/"
+    js/push.js                 build output (gitignored)
+```
+
+- Site scripts are TypeScript under `Client/`, built by Vite into `wwwroot`. No UI framework: the
+  site front end is deliberately minimal. Same toolchain as the RCL, so the repo has one
+  front-end approach throughout.
+- Two entry points with fixed output names and no content hashes: `wwwroot/js/push.js` and
+  `wwwroot/sw.js`. The service worker must sit at `/` to control the whole site and needs a stable
+  URL, or each build would register as a new worker.
+- `sw.ts`, close to the 2018 file: `push` shows the notification with a fixed `tag`;
+  `notificationclick` focuses or opens the URL. Type-checked against the WebWorker library so the
+  events are typed. The icon path is absolute, fixing the 2018 relative path.
+- `push.ts`: feature detection, secure context check, opt-in button, `pushManager.subscribe` with
+  the VAPID public key rendered into the page by the layout, POST with `fetch`.
+- Build output is gitignored. A target in the web `.csproj` runs `npm ci` (only when
+  `node_modules` is missing) and `npm run build` before the .NET build, with declared inputs and
+  outputs so it reruns only when `Client/` changes. `dotnet build` and `dotnet run` work from a
+  fresh clone, for readers and for the agent.
 - One shared layout with the opt-in, used by the Home and Announcement templates.
+- Rejected: plain JavaScript in `wwwroot` (no type checking, mixed approaches in one repo), and
+  committing built files (stale output, noisy diffs).
+- 2018: jQuery modules bundled by Gulp.
 
 ### D10. Verification strategy
 
@@ -177,6 +200,8 @@ POST announcements
   policy remains the real control.
 - [Generated TypeScript client drifts from the API] -> Regenerate after any controller change; the
   task list makes it an explicit step.
+- [The .NET build of the web project now needs Node.js] -> Node is already required by the RCL;
+  the `.csproj` target fails with a clear message when `npm` is not found.
 - [Browser support differs (iOS needs a home screen web app)] -> Out of scope here; the opt-in is
   hidden where unsupported.
 

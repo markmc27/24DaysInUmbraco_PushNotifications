@@ -54,10 +54,11 @@ None. This is the project's first change.
 
 - **New project:** `src/NotificationsRevisit.Announcements` (RCL with a Vite, Lit and TypeScript
   client). Added to `NotificationsRevisit.slnx` and referenced by the web project.
-- **Web project:** new content model migration, a site template and view, `push.js` and `/sw.js`
-  under `wwwroot`, configuration for aliases and the VAPID public key, user secret for the private key.
+- **Web project:** new content model migration, a site template and view, a Vite and TypeScript
+  client (`push.ts`, `sw.ts`) built into `wwwroot/js/push.js` and `wwwroot/sw.js`, configuration for
+  aliases and the VAPID public key, user secret for the private key.
 - **Dependencies:** `WebPush` NuGet package (the same library as 2018, now 1.0.13). Node.js for the
-  RCL's front-end build.
+  front-end builds of both the RCL and the site.
 - **Database:** two new tables in the CMS database (SQLite locally).
 - **APIs:** new Management API endpoints (backoffice auth) and one public subscribe endpoint.
 - **Requirements:** HTTPS (service workers and push need it; the local profile already uses it).
