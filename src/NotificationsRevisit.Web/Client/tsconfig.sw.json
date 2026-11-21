@@ -1,0 +1,9 @@
+{
+  // The service worker: type-checked against the WebWorker library, so push and click events are typed.
+  // DOM and WebWorker types conflict, so it gets its own config.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "WebWorker"]
+  },
+  "include": ["src/sw.ts"]
+}

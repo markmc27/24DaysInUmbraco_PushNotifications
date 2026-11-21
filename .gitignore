@@ -474,12 +474,18 @@ src/*/umbraco/Data/TEMP/
 src/*/umbraco/Data/*.sqlite.db
 src/*/umbraco/Data/*.sqlite.db-shm
 src/*/umbraco/Data/*.sqlite.db-wal
+src/*/umbraco/Data/*.bak-*
 
 # Log files
 src/*/umbraco/Logs/
 
 # Media files
 src/*/wwwroot/media/
+
+# Client build output (built from Client/ by npm before the .NET build)
+src/NotificationsRevisit.Announcements/wwwroot/App_Plugins/
+src/NotificationsRevisit.Web/wwwroot/sw.js
+src/NotificationsRevisit.Web/wwwroot/js/
 
 # Local AI agent settings (personal overrides)
 .claude/settings.local.json

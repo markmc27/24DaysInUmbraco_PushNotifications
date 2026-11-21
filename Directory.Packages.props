@@ -12,8 +12,22 @@
   <ItemGroup>
     <!-- Umbraco 17 is the current LTS. Pinned to an exact patch so builds are reproducible. -->
     <PackageVersion Include="Umbraco.Cms" Version="17.8.2" />
+    <!-- Used by the NotificationsRevisit.Announcements extension (RCL). Keep in step with Umbraco.Cms. -->
+    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="17.8.2" />
+    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="17.8.2" />
+    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="17.8.2" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="17.8.2" />
     <!-- Umbraco Automate 17.6.x is the newest Automate build for the 17 line (needs Umbraco.Cms >= 17.6.0). -->
     <PackageVersion Include="Umbraco.Automate" Version="17.6.0" />
     <PackageVersion Include="Microsoft.ICU.ICU4C.Runtime" Version="$(UmbracoAppLocalIcuVersion)" />
+    <!-- Web push: the same library the 2018 version used. -->
+    <PackageVersion Include="WebPush" Version="1.0.13" />
+    <!-- Tests -->
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <!-- Same version Umbraco 17.8.2 uses; the repository tests run on an in-memory SQLite database. -->
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
 </Project>

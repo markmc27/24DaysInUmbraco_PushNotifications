@@ -1,0 +1,14 @@
+{
+  "name": "notifications-revisit-site",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.sw.json && vite build",
+    "watch": "vite build --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}

@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNetCore.Antiforgery
+@using Microsoft.Extensions.Options
+@using NotificationsRevisit.Announcements.Push
+@inject IAntiforgery Antiforgery
+@inject IOptions<PushOptions> PushOptions
+@{
+    // The subscribe endpoint validates this token (RequestVerificationToken header).
+    AntiforgeryTokenSet tokens = Antiforgery.GetAndStoreTokens(Context);
+}
+<!doctype html>
+<html lang="en-GB">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] | Swim club</title>
+    <meta name="request-verification-token" content="@tokens.RequestToken">
+    <meta name="vapid-public-key" content="@PushOptions.Value.Vapid.PublicKey">
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; color: #1b264f; }
+        header { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; border-bottom: 1px solid #d8d7d9; padding-bottom: 1rem; }
+        header a { color: inherit; font-weight: 700; text-decoration: none; }
+        button { font: inherit; padding: .5rem 1rem; border: 2px solid #1b264f; border-radius: .25rem; background: #1b264f; color: #fff; cursor: pointer; }
+        button:disabled { background: #fff; color: #1b264f; cursor: default; }
+        button:focus-visible { outline: 3px solid #f5c1bc; outline-offset: 2px; }
+        .push-status { margin: .25rem 0 0; font-size: .9rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/">Swim club</a>
+        @* Hidden until push.ts confirms support, a secure context and no existing subscription. *@
+        <div id="push-opt-in" hidden>
+            <button type="button" id="push-opt-in-button">Get announcements as notifications</button>
+            <p id="push-opt-in-status" class="push-status" role="status" aria-live="polite"></p>
+        </div>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    <script type="module" src="/js/push.js" asp-append-version="false"></script>
+</body>
+</html>

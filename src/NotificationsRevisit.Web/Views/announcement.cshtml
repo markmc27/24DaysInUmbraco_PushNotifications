@@ -1,0 +1,15 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = "layout.cshtml";
+    string heading = Model.Value<string>("heading") ?? Model.Name;
+    string mainText = Model.Value<string>("mainText") ?? string.Empty;
+    ViewData["Title"] = heading;
+}
+<article>
+    <h1>@heading</h1>
+    <p><time datetime="@Model.CreateDate.ToString("yyyy-MM-dd")">@Model.CreateDate.ToString("d MMMM yyyy")</time></p>
+    @foreach (string paragraph in mainText.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+    {
+        <p>@paragraph</p>
+    }
+</article>

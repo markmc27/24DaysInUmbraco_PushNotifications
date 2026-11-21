@@ -1,0 +1,47 @@
+<Project>
+  <!--
+    Builds a project's TypeScript client (Client/) with npm before the .NET build, so
+    `dotnet build` and `dotnet run` work from a fresh clone. Import from a .csproj after setting:
+
+      ClientOutputFiles   the files the Vite build writes (globs, relative to the project,
+                          separated by semicolons)
+      ClientOutputMarker  one file the build always produces, used for incremental builds:
+                          the npm build only reruns when something in Client/ is newer
+
+    The build output is gitignored, so it is added to the project's content here, after it exists.
+  -->
+  <PropertyGroup>
+    <ClientDir>$(MSBuildProjectDirectory)\Client\</ClientDir>
+    <!-- Keep node_modules out of the default item globs (thousands of .json files). -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);Client\node_modules\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ClientSource Include="Client\src\**\*;Client\public\**\*;Client\package.json;Client\package-lock.json;Client\tsconfig*.json;Client\vite.config.ts" />
+  </ItemGroup>
+
+  <Target Name="ClientCheckNpm">
+    <Exec Command="npm --version" ContinueOnError="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ExitCode" PropertyName="_ClientNpmExitCode" />
+    </Exec>
+    <Error Condition="'$(_ClientNpmExitCode)' != '0'"
+           Text="Node.js and npm are needed to build $(MSBuildProjectName)'s client scripts (Client/). Install Node.js LTS and try again." />
+  </Target>
+
+  <Target Name="ClientInstall" DependsOnTargets="ClientCheckNpm" Condition="!Exists('$(ClientDir)node_modules')">
+    <Exec Command="npm ci" WorkingDirectory="$(ClientDir)" />
+  </Target>
+
+  <Target Name="ClientBuild" BeforeTargets="BeforeBuild" DependsOnTargets="ClientInstall"
+          Inputs="@(ClientSource)" Outputs="$(ClientOutputMarker)">
+    <Exec Command="npm run build" WorkingDirectory="$(ClientDir)" />
+  </Target>
+
+  <!-- Re-glob the output after the npm build, so files created during this build are included. -->
+  <Target Name="ClientIncludeOutput" AfterTargets="ClientBuild" BeforeTargets="ResolveStaticWebAssetsInputs">
+    <ItemGroup>
+      <Content Remove="$(ClientOutputFiles)" />
+      <Content Include="$(ClientOutputFiles)" />
+    </ItemGroup>
+  </Target>
+</Project>

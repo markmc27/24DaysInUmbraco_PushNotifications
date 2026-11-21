@@ -1,0 +1,8 @@
+{
+  // Page scripts: type-checked against the DOM.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src/push.ts"]
+}

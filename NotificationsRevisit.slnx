@@ -1,5 +1,9 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/NotificationsRevisit.Announcements/NotificationsRevisit.Announcements.csproj" />
     <Project Path="src/NotificationsRevisit.Web/NotificationsRevisit.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NotificationsRevisit.Announcements.Tests/NotificationsRevisit.Announcements.Tests.csproj" />
   </Folder>
 </Solution>

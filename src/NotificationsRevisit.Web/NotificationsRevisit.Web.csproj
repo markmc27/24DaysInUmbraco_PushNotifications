@@ -34,11 +34,25 @@
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="$(UmbracoAppLocalIcuVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NotificationsRevisit.Announcements\NotificationsRevisit.Announcements.csproj" />
+  </ItemGroup>
+
 
   <PropertyGroup>
     <!-- Razor files are needed for the backoffice to work correctly -->
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
   </PropertyGroup>
 
+  <!-- Site scripts: TypeScript in Client/, built by Vite into wwwroot before the .NET build. Output is gitignored. -->
+  <ItemGroup>
+    <Content Remove="Client\**" />
+    <None Include="Client\**" Exclude="Client\node_modules\**" />
+  </ItemGroup>
+  <PropertyGroup>
+    <ClientOutputFiles>wwwroot\sw.js;wwwroot\js\**</ClientOutputFiles>
+    <ClientOutputMarker>wwwroot\sw.js</ClientOutputMarker>
+  </PropertyGroup>
+  <Import Project="..\..\build\ClientBuild.targets" />
 
 </Project>
