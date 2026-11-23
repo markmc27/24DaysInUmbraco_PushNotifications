@@ -38,6 +38,7 @@ messages, not just the agent's working time.
 | 14:22 to 14:23 | Unsubscribe and resend: 410 after about 45 seconds, subscription removed (task 8.3) | 142 to 143 min |
 | 14:24 to 14:26 | Click check repeated in the human's own browser: both rounds pass (task 8.2) | 144 to 146 min |
 | 14:27 | All 30 tasks ticked, strict validation run, write-up complete (task 8.4) | **147 min** |
+| 14:33 | Implementation committed (`75aac04`); timer paused by the human for code review and the 2018 comparison | 153 min |
 
 ## Phase 1: setting up the PoC (11:01 to 11:11)
 
