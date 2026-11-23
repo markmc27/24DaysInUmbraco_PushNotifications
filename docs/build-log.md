@@ -39,6 +39,7 @@ messages, not just the agent's working time.
 | 14:24 to 14:26 | Click check repeated in the human's own browser: both rounds pass (task 8.2) | 144 to 146 min |
 | 14:27 | All 30 tasks ticked, strict validation run, write-up complete (task 8.4) | **147 min** |
 | 14:33 | Implementation committed (`75aac04`); timer paused by the human for code review and the 2018 comparison | 153 min |
+| 16:28 (23 November 2026) | Approach 2 build starts: timed separately in [build-log-approach-2.md](build-log-approach-2.md) | 153 min (approach 1 total) |
 
 ## Phase 1: setting up the PoC (11:01 to 11:11)
 
@@ -1085,3 +1086,128 @@ All small, and recorded where they happened:
 - Test data in the fresh database: a translator test user (`translator@example.com`, dummy
   password) and seven announcement pages from the end-to-end runs.
 - The admin password in user secrets is now a dummy value, at the human's request for this PoC.
+
+---
+
+## Phase 5: planning improvements and the Automate comparison (timer paused)
+
+Started 23 November 2026. The timer is still paused at 153 minutes, so this planning is not in
+the elapsed totals.
+
+### What Automate 17.6.0 offers for "send a push when a page is published"
+
+Docs research by a subagent, then each key claim checked against the installed
+`Umbraco.Automate.Core` 17.6.0 assembly (its XML docs), because the public docs track 18 and 19:
+
+| Question | Answer (verified in 17.6.0) |
+|---|---|
+| Is there a "content published" trigger? | Yes, `ContentPublishedTrigger`, filterable by content type. Also a batch variant. |
+| What does it give an automation? | Content key, name, content type key and alias, cultures. **No URL and no property values.** |
+| Can a step read the page's properties? | Yes, the built-in Get Content action. |
+| Is there a web push action? | No. |
+| Could the built-in HTTP Request action call our push service? | Only public destinations are allowed (SSRF protection), so not a localhost endpoint. |
+| Can we write our own action? | Yes: `ActionBase<TSettings, TOutput>` with an `[Action]` attribute, discovered at start-up. |
+| Can automations live in the repo? | There is an export and import model (`AutomationExportModel`, versioned JSON), so an exported automation can be committed. How to import it on a fresh clone is still to confirm. |
+
+**Early conclusion:** the fair comparison is a classic `INotificationAsyncHandler<ContentPublishedNotification>`
+against an Automate automation (Content Published trigger, then a small custom "Send push
+notification" action). Both would call the same `IPushService`, so the comparison is about the
+trigger and orchestration, not the push code.
+
+### Reframe: Automate is an alternative approach, not an add-on
+
+**Correction from the human (23 November 2026):** the early conclusion above treated Automate as
+something running alongside the dashboard. It is not. The article explores **alternative
+approaches to the same problem**: "let the club tell parents about announcements by push".
+
+| | Approach 1: custom extension (done) | Approach 2: Automate, self-hosted push | Approach 3: Automate and OneSignal |
+|---|---|---|---|
+| Editor experience | Custom Lit dashboard and sidebar | Publish an Announcement page; an automation does the rest | Same as approach 2 |
+| Orchestration | Our C# service, inside the request | Automate workflow, in the background | Automate workflow, in the background |
+| Push sending | Our `IPushService` and WebPush | A custom "Send push notification" action wrapping our `IPushService` | A generic OneSignal action, written once, reusable on any site |
+| Subscriptions and service worker | Ours | Ours | OneSignal's SDK and service worker |
+| Custom C# | All of it | One action | One generic action, or none if the built-in HTTP Request action is enough |
+
+**Why Automate matters here (the human's reasoning):**
+- **Background sends come for free.** Automate runs workflows off the request, which fixes the
+  approach 1 limitation that the editor waits while every push is sent.
+- **It opens the door to more than announcements.** For example, a trigger from the club's
+  session management system could send reminders or changes only to swimmers and parents booked
+  on a specific session. That needs more build-out (who is subscribed for which session), but the
+  orchestration layer is already there.
+- **It leads to approach 3.** A OneSignal (or similar) action means no custom push code at all:
+  the provider handles subscriptions, delivery and targeting, and the action is written once.
+
+**Agent note:** OneSignal was discussed outside this session; this log has no earlier record of
+it, so this entry is where it starts.
+
+### Decision: one tagged milestone per approach
+
+**Decided (23 November 2026):** build the approaches in sequence on `main` and tag each one.
+
+- `approach-1-dashboard` tags `f5f1b88`: the custom extension plus its walkthrough.
+- `approach-2-automate` and `approach-3-onesignal` follow as their work lands.
+
+**Why:** approaches 1 and 3 cannot run on one site at the same time (both need the root service
+worker scope, and two subscription systems would double-send). Tags let readers check out each
+approach whole and diff between them, and keep each step small.
+
+**Rejected:** all three live behind a config switch. Good for a demo, but it adds code that exists
+only to switch, which the article would have to explain away.
+
+### Decision: approach 2 removes the dashboard entirely
+
+**Decided (23 November 2026):** approach 2 is a pure alternative. The Lit dashboard and sidebar,
+the backoffice API controller, the announcement service and the history table go. The push
+stack (`IPushService`, `WebPushSender`), the subscriptions endpoint and table, and the site
+opt-in and service worker stay. A new custom Automate action sends the push.
+
+**Why:** it is the honest comparison, and the diff between the two tags tells the story of how
+much custom code Automate replaces.
+
+**Trade-off, for the article:** editors lose the purpose-built view (subscriber count and a
+delivery table in one place). The action's output still appears in each Automate run's log, so
+the numbers exist, just less conveniently.
+
+### Decision: approach 2 pushes on first publish only
+
+**Decided (23 November 2026):** the custom Automate action records which pages it has pushed and
+skips a page it has already sent, logging "already sent" in the run log.
+
+**Why:** Automate's Content Published trigger fires on every publish, so fixing a typo would
+re-notify every parent. Approach 1 sent exactly one push per announcement; this keeps that
+behaviour without asking editors to remember anything.
+
+**Rejected:** every publish sends (a trap for editors); an editor tickbox alone (republishing with
+it ticked still re-sends). A tickbox could come later on top of this.
+
+**Article point:** a generic "content published" event is not the same as "announce this".
+Closing that gap is exactly what the custom action is for.
+
+### Archiving approach 1 and capturing approach 2
+
+**Done (23 November 2026, timer still paused):**
+
+- `openspec archive rebuild-announcements-dashboard --yes`: the change moved to
+  `openspec/changes/archive/2026-11-23-rebuild-announcements-dashboard`, and its three specs became
+  the main specs in `openspec/specs/` (27 requirements). They are now the record of what approach 1
+  does.
+- `openspec new change automate-announcements`, with proposal, two delta specs, design and tasks.
+  `openspec validate --strict` passes.
+
+**How the specs tell the story:** approach 2's `announcements` delta **removes** ten approach 1
+requirements (dashboard, count, history, compose, accessibility of the dashboard and so on), each
+with a Reason and a Migration, **modifies** "push follows a successful publish", and **adds**
+"republishing does not notify again", "only announcement pages trigger a push" and "automation
+is installed with the site". A new `push-automation` capability describes the reusable action.
+Read side by side, the archived change and this one are a plain-English diff of the two approaches.
+
+**Design choices worth a line in the article** (design.md D1 to D7):
+- The push stack, subscriptions and site front end are untouched, so the comparison isolates
+  orchestration.
+- The action claims a page **before** sending (a primary key insert) and releases the claim if
+  the send throws: once per page, even when runs overlap.
+- The automation is exported to JSON in the repo and imported by a site migration, so a fresh
+  clone works with no backoffice set-up.
+- Every API was checked in the installed 17.6.0 assembly; task group 1 is a spike that proves
+  export, import and a custom action before any approach 1 code is removed.
