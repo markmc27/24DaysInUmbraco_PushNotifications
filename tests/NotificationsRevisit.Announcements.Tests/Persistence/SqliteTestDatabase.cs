@@ -5,7 +5,7 @@ using NotificationsRevisit.Announcements.Persistence;
 namespace NotificationsRevisit.Announcements.Tests.Persistence;
 
 /// <summary>
-/// An in-memory SQLite database with the two tables, for testing the repository SQL with NPoco.
+/// An in-memory SQLite database with the extension's tables, for testing the repository SQL with NPoco.
 /// The schema mirrors what the migration creates, including the unique endpoint index.
 /// </summary>
 internal sealed class SqliteTestDatabase : IDisposable
@@ -26,16 +26,9 @@ internal sealed class SqliteTestDatabase : IDisposable
                 Auth TEXT NOT NULL,
                 CreatedUtc TEXT NOT NULL);
             CREATE UNIQUE INDEX IX_{PushSubscriptionDto.TableName}_Endpoint ON {PushSubscriptionDto.TableName} (Endpoint);
-            CREATE TABLE {AnnouncementHistoryDto.TableName} (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Heading TEXT NOT NULL,
-                SentUtc TEXT NOT NULL,
-                UserKey TEXT NOT NULL,
-                UserName TEXT NOT NULL,
-                PageKey TEXT NOT NULL,
-                Attempted INTEGER NOT NULL,
-                Succeeded INTEGER NOT NULL,
-                Failed INTEGER NOT NULL);
+            CREATE TABLE {PushedContentDto.TableName} (
+                ContentKey TEXT NOT NULL PRIMARY KEY,
+                SentUtc TEXT NOT NULL);
             """);
     }
 

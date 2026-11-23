@@ -1,0 +1,82 @@
+{
+  "formatVersion": "1.0",
+  "exportedAt": "2026-11-23T16:44:03.0314152Z",
+  "exportedFrom": {
+    "product": "Umbraco.Automate",
+    "version": "17.6.0\u002B185bd61"
+  },
+  "automation": {
+    "id": "f3049e9d-cba0-45af-bdb5-c4d682281dfb",
+    "alias": "announce-new-pages",
+    "name": "Announce new pages",
+    "description": null,
+    "trigger": {
+      "triggerAlias": "umbracoAutomate.contentPublished",
+      "settings": {
+        "contentTypes": "5e9a3b71-0c2d-4f8e-a6b1-3d7c9e2f1a01",
+        "onAutomationOriginatedEvent": "SkipOnCycle"
+      }
+    },
+    "steps": [
+      {
+        "id": "8967d9b0-3c8a-404e-9c4d-ebc48b011b25",
+        "actionAlias": "umbracoAutomate.getContent",
+        "name": "Get Content",
+        "alias": "getContent",
+        "connectionAlias": null,
+        "settings": {
+          "contentKey": "${ trigger.contentKey }",
+          "culture": null
+        },
+        "inputMappings": {},
+        "position": {
+          "x": 380,
+          "y": 270
+        },
+        "errorBehavior": "Terminate",
+        "retryInterval": null,
+        "maxRetries": null
+      },
+      {
+        "id": "4ca10aa1-e18d-4ac6-8731-2fab745caa87",
+        "actionAlias": "notificationsRevisit.sendPushNotification",
+        "name": "Send push notification",
+        "alias": "sendPushNotification",
+        "connectionAlias": null,
+        "settings": {
+          "message": "${ steps.getContent.properties.heading }",
+          "contentKey": "${ trigger.contentKey }"
+        },
+        "inputMappings": {},
+        "position": {
+          "x": 540,
+          "y": 608.8235294117648
+        },
+        "errorBehavior": "Terminate",
+        "retryInterval": null,
+        "maxRetries": null
+      }
+    ],
+    "connections": [
+      {
+        "sourceStepId": "00000000-0000-0000-0000-000000000000",
+        "sourceHandle": null,
+        "targetStepId": "8967d9b0-3c8a-404e-9c4d-ebc48b011b25",
+        "targetHandle": null,
+        "outcome": null,
+        "filter": null
+      },
+      {
+        "sourceStepId": "8967d9b0-3c8a-404e-9c4d-ebc48b011b25",
+        "sourceHandle": "success",
+        "targetStepId": "4ca10aa1-e18d-4ac6-8731-2fab745caa87",
+        "targetHandle": null,
+        "outcome": "success",
+        "filter": null
+      }
+    ],
+    "canvasState": "{\u0022viewport\u0022:{\u0022x\u0022:201,\u0022y\u0022:-103.5,\u0022zoom\u0022:0.85},\u0022triggerPosition\u0022:{\u0022x\u0022:250,\u0022y\u0022:50}}",
+    "notificationSettings": null
+  },
+  "connectionReferences": []
+}

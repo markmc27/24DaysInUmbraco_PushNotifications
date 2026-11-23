@@ -483,7 +483,6 @@ src/*/umbraco/Logs/
 src/*/wwwroot/media/
 
 # Client build output (built from Client/ by npm before the .NET build)
-src/NotificationsRevisit.Announcements/wwwroot/App_Plugins/
 src/NotificationsRevisit.Web/wwwroot/sw.js
 src/NotificationsRevisit.Web/wwwroot/js/
 

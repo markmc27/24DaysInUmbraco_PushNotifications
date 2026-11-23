@@ -1,8 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using NotificationsRevisit.Announcements.Announcements;
-using NotificationsRevisit.Announcements.Authorization;
+using NotificationsRevisit.Announcements.Automation;
 using NotificationsRevisit.Announcements.Persistence;
 using NotificationsRevisit.Announcements.Push;
 using NotificationsRevisit.Announcements.Subscriptions;
@@ -11,22 +10,19 @@ using Umbraco.Cms.Core.DependencyInjection;
 
 namespace NotificationsRevisit.Announcements.Composers;
 
-/// <summary>Registers the announcements services.</summary>
+/// <summary>
+/// Registers the push services. The "Send push notification" Automate action needs no registration:
+/// Automate discovers it from its [Action] attribute.
+/// </summary>
 public class AnnouncementsComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
         builder.Services.TryAddSingleton(TimeProvider.System);
 
-        // The site's content model aliases, validated at startup
-        builder.Services.AddOptions<ContentModelOptions>()
-            .Bind(builder.Config.GetSection(ContentModelOptions.SectionName))
-            .ValidateOnStart();
-        builder.Services.AddSingleton<IValidateOptions<ContentModelOptions>, ContentModelOptionsValidator>();
-
         // Persistence
         builder.Services.AddSingleton<IPushSubscriptionRepository, PushSubscriptionRepository>();
-        builder.Services.AddSingleton<IAnnouncementHistoryRepository, AnnouncementHistoryRepository>();
+        builder.Services.AddSingleton<IPushedContentRepository, PushedContentRepository>();
 
         // Push delivery: options validated at startup, HttpClient managed by IHttpClientFactory
         builder.Services.AddOptions<PushOptions>()
@@ -39,9 +35,7 @@ public class AnnouncementsComposer : IComposer
         // Public subscribe endpoint: per-IP rate limit
         builder.AddSubscribeRateLimiting();
 
-        // Backoffice API: Content access and not a translator; the announcement flow (design D5)
-        builder.AddAnnouncementsAuthorization();
-        builder.Services.AddTransient<IAnnouncementPages, AnnouncementPages>();
-        builder.Services.AddTransient<IAnnouncementService, AnnouncementService>();
+        // The push action resolves page URLs outside a request
+        builder.Services.AddTransient<IContentUrlResolver, ContentUrlResolver>();
     }
 }

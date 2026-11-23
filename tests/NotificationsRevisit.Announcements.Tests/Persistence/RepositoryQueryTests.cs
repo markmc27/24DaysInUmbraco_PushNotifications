@@ -56,27 +56,4 @@ public class RepositoryQueryTests : IDisposable
         Assert.Equal(0, await PushSubscriptionQueries.DeleteByEndpointsAsync(_db.Database, []));
         Assert.Equal(1, await PushSubscriptionQueries.CountAsync(_db.Database));
     }
-
-    [Fact]
-    public async Task History_lists_newest_first()
-    {
-        await AnnouncementHistoryQueries.InsertAsync(_db.Database, History("Older", Now));
-        await AnnouncementHistoryQueries.InsertAsync(_db.Database, History("Newer", Now.AddDays(1)));
-
-        IReadOnlyList<AnnouncementHistoryDto> all = await AnnouncementHistoryQueries.GetAllAsync(_db.Database);
-
-        Assert.Equal(["Newer", "Older"], all.Select(h => h.Heading));
-    }
-
-    private static AnnouncementHistoryDto History(string heading, DateTime sentUtc) => new()
-    {
-        Heading = heading,
-        SentUtc = sentUtc,
-        UserKey = Guid.NewGuid(),
-        UserName = "Editor",
-        PageKey = Guid.NewGuid(),
-        Attempted = 3,
-        Succeeded = 2,
-        Failed = 1,
-    };
 }

@@ -15,32 +15,10 @@
 
   <!-- Central package management - no versions -->
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Api.Common" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" />
+    <PackageReference Include="Umbraco.Automate.Core" />
     <PackageReference Include="Umbraco.Cms.Web.Common" />
     <PackageReference Include="Umbraco.Cms.Web.Website" />
     <PackageReference Include="WebPush" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <!-- Don't include the client folder as part of packaging nuget build -->
-    <Content Remove="Client\**" />
-
-    <!-- However make the Umbraco-package.json included for dotnet pack or nuget package and visible to the solution -->
-    <None Include="Client\public\umbraco-package.json" Pack="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <!-- Build the backoffice client (Client/, Vite) before the .NET build. Output is gitignored. -->
-  <PropertyGroup>
-    <ClientOutputDir>wwwroot\App_Plugins\NotificationsRevisitAnnouncements\</ClientOutputDir>
-    <ClientOutputFiles>$(ClientOutputDir)**</ClientOutputFiles>
-    <ClientOutputMarker>$(ClientOutputDir)notifications-revisit-announcements.js</ClientOutputMarker>
-  </PropertyGroup>
-  <Import Project="..\..\build\ClientBuild.targets" />
 
 </Project>

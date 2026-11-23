@@ -16,5 +16,7 @@ public class AnnouncementsMigrationPlan : PackageMigrationPlan
     protected override void DefinePlan()
     {
         To<CreateAnnouncementsTables>(new Guid("3C1E7A52-6E0B-4C1F-9B7D-2F4B8C1D5A01"));
+        To<AddPushedContentTable>(new Guid("3C1E7A52-6E0B-4C1F-9B7D-2F4B8C1D5A02"));
+        To<DropAnnouncementsHistoryTable>(new Guid("3C1E7A52-6E0B-4C1F-9B7D-2F4B8C1D5A03"));
     }
 }

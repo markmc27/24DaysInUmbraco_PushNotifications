@@ -19,11 +19,15 @@
     <PackageVersion Include="Umbraco.Cms.Web.Website" Version="17.8.2" />
     <!-- Umbraco Automate 17.6.x is the newest Automate build for the 17 line (needs Umbraco.Cms >= 17.6.0). -->
     <PackageVersion Include="Umbraco.Automate" Version="17.6.0" />
+    <!-- The extension's custom action builds on Automate's core API only. Keep in step with Umbraco.Automate. -->
+    <PackageVersion Include="Umbraco.Automate.Core" Version="17.6.0" />
     <PackageVersion Include="Microsoft.ICU.ICU4C.Runtime" Version="$(UmbracoAppLocalIcuVersion)" />
     <!-- Web push: the same library the 2018 version used. -->
     <PackageVersion Include="WebPush" Version="1.0.13" />
     <!-- Tests -->
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <!-- Automate's test helpers (ActionTestHarness). Keep in step with Umbraco.Automate. -->
+    <PackageVersion Include="Umbraco.Automate.Testing" Version="17.6.0" />
     <!-- Same version Umbraco 17.8.2 uses; the repository tests run on an in-memory SQLite database. -->
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.12" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
