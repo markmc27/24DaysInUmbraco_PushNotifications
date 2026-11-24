@@ -413,3 +413,12 @@ sending; run history with replay; no backoffice front-end to maintain.
 package migrations run before Automate's schema exists; background steps need
 `UmbracoApplicationUrl` for absolute URLs; an exported automation does not carry its workspace;
 deleting an automation deletes its run history.
+
+## 6. Archive (24 November, outside the timer)
+
+- Tagged `approach-2-automate` and archived the change as
+  `openspec/changes/archive/2026-11-24-automate-announcements/`.
+- The archive synced the delta specs: `announcements` gained 3 requirements, changed 1 and lost
+  the 10 dashboard ones; `push-automation` is a new main spec with 6 requirements.
+- Rewrote the `announcements` spec's Purpose by hand, because the sync never touches an existing
+  Purpose and it still described the dashboard. `openspec validate --specs` passes.
