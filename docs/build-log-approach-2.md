@@ -29,6 +29,8 @@ including the human's thinking and review time. The timer starts at 0 here; appr
 | 17:08 | `UmbracoApplicationUrl` set; 5.1 passes with the correct link; 4.3 ticked | 40 min |
 | 17:08 to 17:31 | Waiting for the human (click test set-up, backoffice sign-in) | 40 to 63 min |
 | 17:33 | 5.3 human clicks the notification and the page opens; 5.4 counts and comparison | 65 min |
+| 17:33 to 11:30 (24 November) | Not counted: overnight, then committed (`d091836`), pushed and tagged `approach-2-automate` | 65 min |
+| 11:30 (24 November) | Timer paused. **Approach 2 total: 65 minutes** (approach 1: 153) | 65 min |
 
 ## Starting point
 
